@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:3000
+# @authToken = {{authenticate.response.body.access_token}}
+
+# @name create_account
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+
+{
+  "name": "Marcelo Yuzo",
+  "email": "marceloyuzo3@gmail.com",
+  "password": "12345678",
+  "cpf": "12345678912"
+}
+
+###
+
+# # @name authenticate
+# POST {{baseUrl}}/sessions
+# Content-Type: application/json
+
+# {
+#   "email": "marceloyuzo3@gmail.com",
+#   "password": "12345678"
+# }
+
+# ###
+
+# # @name create_question
+# POST {{baseUrl}}/questions
+# Content-Type: application/json
+# Authorization: Bearer {{authToken}}
+
+# {
+#   "title": "Nova pergunta 4",
+#   "content": "Conteudo 123"
+# }
+
+# ###
+
+# # @name fetch_recent_questions
+# GET {{baseUrl}}/questions?page=1
+# Content-Type: application/json
+# Authorization: Bearer {{authToken}}
