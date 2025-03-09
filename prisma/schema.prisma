@@ -13,12 +13,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model DeliveryMan {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  cpf      String @unique
+enum ROLE {
+  deliveryMan
+  admin
+}
 
-  @@map("deliveryMans")
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  cpf      String  @unique
+  role     ROLE    @default(deliveryMan)
+  order    Order[]
+
+  @@map("users")
+}
+
+enum STATUS {
+  pending
+  pickedUp
+  delivered
+}
+
+model Order {
+  id          String    @id @default(uuid())
+  status      STATUS    @default(pending)
+  userId      String?   @map("user_id")
+  addresseeId String    @map("addressee_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  pickedAt    DateTime? @map("picked_at")
+  deliveredAt DateTime? @map("delivered_at")
+  updatedAt   DateTime? @map("updated_at")
+
+  user      User?     @relation(fields: [userId], references: [id])
+  addressee Addressee @relation(fields: [addresseeId], references: [id])
+
+  @@map("packages")
+}
+
+model Address {
+  id           String @id @default(uuid())
+  postalCode   String @map("postal_code")
+  country      String
+  state        String
+  city         String
+  neighborhood String
+  street       String
+  number       String
+  latitude     Float
+  longitude    Float
+  addresseeId  String @unique @map("addressee_id")
+
+  addressee Addressee @relation(fields: [addresseeId], references: [id])
+
+  @@map("address")
+}
+
+model Addressee {
+  id   String @id @default(uuid())
+  name String @unique
+
+  Address Address?
+  Order   Order[]
+
+  @@map("addressees")
 }
