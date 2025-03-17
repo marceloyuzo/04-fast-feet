@@ -40,11 +40,23 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return order
   }
 
-  async findManyByUserId(userId: string): Promise<Order[] | null> {
+  async findManyByUserId(
+    userId: string,
+    page: number,
+    limit: number,
+    status: 'onGoing' | 'done',
+  ): Promise<Order[] | null> {
     const orders = await this.prisma.order.findMany({
       where: {
         userId,
+        status:
+          status === 'onGoing' ? { in: ['pending', 'pickedUp'] } : 'delivered',
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+      skip: (page - 1) * limit,
     })
 
     return orders

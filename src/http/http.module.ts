@@ -18,9 +18,12 @@ import { DeliveringOrderController } from './controllers/delivering-order.contro
 import { DeliveringOrderUseCase } from 'src/use-cases/delivering-order-use-case'
 import { FetchOrdersController } from './controllers/fetch-orders.controller'
 import { FetchOrdersUseCase } from 'src/use-cases/fetch-orders-use-case'
+import { UploadAttachmentController } from './controllers/upload-attachment.controller'
+import { StorageModule } from 'src/storage/storage.module'
+import { UploadAndCreateAttachmentUseCase } from 'src/use-cases/upload-and-create-attachment-use-case'
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule, StorageModule],
   controllers: [
     RegisterAccountController,
     AuthenticateAccountController,
@@ -30,6 +33,7 @@ import { FetchOrdersUseCase } from 'src/use-cases/fetch-orders-use-case'
     ReturningOrderController,
     DeliveringOrderController,
     FetchOrdersController,
+    UploadAttachmentController,
   ],
   providers: [
     RegisterAccountUseCase,
@@ -41,6 +45,7 @@ import { FetchOrdersUseCase } from 'src/use-cases/fetch-orders-use-case'
     ReturningOrderUseCase,
     DeliveringOrderUseCase,
     FetchOrdersUseCase,
+    UploadAndCreateAttachmentUseCase,
   ],
 })
 export class HttpModule {}

@@ -8,22 +8,26 @@ import { z } from 'zod'
 const deliveringOrderBodySchema = z.object({
   orderId: z.string(),
   userId: z.string(),
+  attachments: z.array(z.string().uuid()),
 })
 
 type DeliveringOrderBodySchema = z.infer<typeof deliveringOrderBodySchema>
 
 @Controller('order')
-// @Roles('deliveryMan')
-// @UseGuards(JwtAuthGuard)
+@Roles('deliveryMan')
+@UseGuards(JwtAuthGuard)
 export class DeliveringOrderController {
   constructor(private deliveringOrderUseCase: DeliveringOrderUseCase) {}
 
   @Patch('/delivering')
   @UsePipes(new ZodValidationPipe(deliveringOrderBodySchema))
-  async handle(@Body() { orderId, userId }: DeliveringOrderBodySchema) {
+  async handle(
+    @Body() { orderId, userId, attachments }: DeliveringOrderBodySchema,
+  ) {
     await this.deliveringOrderUseCase.execute({
       orderId,
       userId,
+      attachmentsIds: attachments,
     })
   }
 }

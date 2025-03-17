@@ -4,12 +4,14 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
+import { AttachmentsRepository } from 'src/repositories/attachments-repository'
 import { OrdersRepository } from 'src/repositories/orders-repository'
 import { UsersRepository } from 'src/repositories/users-repository'
 
 interface DeliveringOrderUseCaseProps {
   userId: string
   orderId: string
+  attachmentsIds: string[]
 }
 
 @Injectable()
@@ -17,9 +19,14 @@ export class DeliveringOrderUseCase {
   constructor(
     private ordersRepository: OrdersRepository,
     private usersRepository: UsersRepository,
+    private attachmentsRepository: AttachmentsRepository,
   ) {}
 
-  async execute({ orderId, userId }: DeliveringOrderUseCaseProps) {
+  async execute({
+    orderId,
+    userId,
+    attachmentsIds,
+  }: DeliveringOrderUseCaseProps) {
     const userExist = await this.usersRepository.findById(userId)
 
     if (!userExist) {
@@ -47,6 +54,15 @@ export class DeliveringOrderUseCase {
         'Este pedido não está em estado possível de entrega.',
       )
     }
+
+    const attachments =
+      await this.attachmentsRepository.findByIds(attachmentsIds)
+
+    if (attachments.length !== attachmentsIds.length) {
+      throw new NotFoundException('Um ou mais anexos não foram encontrados.')
+    }
+
+    await this.attachmentsRepository.update(attachmentsIds, orderId)
 
     await this.ordersRepository.update({
       ...orderExist,

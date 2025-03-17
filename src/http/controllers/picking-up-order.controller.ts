@@ -13,8 +13,8 @@ const pickingUpOrderBodySchema = z.object({
 type PickingUpOrderBodySchema = z.infer<typeof pickingUpOrderBodySchema>
 
 @Controller('order')
-// @Roles('deliveryMan')
-// @UseGuards(JwtAuthGuard)
+@Roles('deliveryMan')
+@UseGuards(JwtAuthGuard)
 export class PickingUpOrderController {
   constructor(private pickingUpOrderUseCase: PickingUpOrderUseCase) {}
 

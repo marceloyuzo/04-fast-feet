@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  Param,
-  Query,
-  UsePipes,
-} from '@nestjs/common'
+import { Controller, Get, HttpCode, Param, Query } from '@nestjs/common'
 import { ZodValidationPipe } from 'src/pipes/zod-validation-pipe'
 import { FetchOrdersUseCase } from 'src/use-cases/fetch-orders-use-case'
 import { z } from 'zod'
@@ -15,8 +8,9 @@ const fetchOrdersParamSchema = z.object({
 })
 
 const fetchOrdersQuerySchema = z.object({
+  page: z.string().optional().default('1').transform(Number),
   limit: z.string().optional().default('10').transform(Number),
-  offset: z.string().optional().default('0').transform(Number),
+  status: z.enum(['onGoing', 'done']),
 })
 
 type FetchOrdersParamSchema = z.infer<typeof fetchOrdersParamSchema>
@@ -28,14 +22,21 @@ export class FetchOrdersController {
 
   @Get('/user/:userId')
   @HttpCode(200)
-  @UsePipes(new ZodValidationPipe(fetchOrdersParamSchema))
-  @UsePipes(new ZodValidationPipe(fetchOrdersQuerySchema))
   async handle(
-    @Param() { userId }: FetchOrdersParamSchema,
-    @Query() { limit, offset }: FetchOrdersQuerySchema,
+    @Param(new ZodValidationPipe(fetchOrdersParamSchema))
+    { userId }: FetchOrdersParamSchema,
+    @Query(new ZodValidationPipe(fetchOrdersQuerySchema))
+    { page, limit, status }: FetchOrdersQuerySchema,
   ) {
     const orders = await this.fetchOrdersUseCase.execute({
       userId,
+      page,
+      limit,
+      status,
     })
+
+    return {
+      orders,
+    }
   }
 }

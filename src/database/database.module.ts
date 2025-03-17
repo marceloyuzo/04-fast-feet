@@ -8,6 +8,8 @@ import { AddressRepository } from 'src/repositories/address-repository'
 import { PrismaAddressRepository } from './prisma/repository/prisma-address-repository'
 import { OrdersRepository } from 'src/repositories/orders-repository'
 import { PrismaOrdersRepository } from './prisma/repository/prisma-orders-repository'
+import { AttachmentsRepository } from 'src/repositories/attachments-repository'
+import { PrismaAttachmentsRepository } from './prisma/repository/prisma-attachments-repository'
 
 @Module({
   providers: [
@@ -28,12 +30,17 @@ import { PrismaOrdersRepository } from './prisma/repository/prisma-orders-reposi
       provide: OrdersRepository,
       useClass: PrismaOrdersRepository,
     },
+    {
+      provide: AttachmentsRepository,
+      useClass: PrismaAttachmentsRepository,
+    },
   ],
   exports: [
     UsersRepository,
     AddresseeRepository,
     AddressRepository,
     OrdersRepository,
+    AttachmentsRepository,
   ],
 })
 export class DatabaseModule {}

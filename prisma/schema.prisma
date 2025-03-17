@@ -46,8 +46,9 @@ model Order {
   deliveredAt DateTime? @map("delivered_at")
   updatedAt   DateTime? @map("updated_at")
 
-  user      User?     @relation(fields: [userId], references: [id])
-  addressee Addressee @relation(fields: [addresseeId], references: [id])
+  user       User?        @relation(fields: [userId], references: [id])
+  addressee  Addressee    @relation(fields: [addresseeId], references: [id])
+  Attachment Attachment[]
 
   @@map("packages")
 }
@@ -78,4 +79,15 @@ model Addressee {
   Order   Order[]
 
   @@map("addressees")
+}
+
+model Attachment {
+  id      String  @id @default(uuid())
+  title   String
+  url     String
+  orderId String? @map("order_id")
+
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@map("attachments")
 }
